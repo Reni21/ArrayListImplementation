@@ -3,11 +3,17 @@ package task02;
 import java.io.Serializable;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ *
+ * @param <T>
+ *     This ArrayList implementation does not support adding null element,
+ *     because of inability to change or delete added element.
+ */
 public class MyArrayList<T>
-        extends AbstractList<T> implements List<T>, RandomAccess, Serializable, Cloneable
-{
+        extends AbstractList<T> implements List<T>, RandomAccess, Serializable, Cloneable {
 
     private int initCapacity = 10;
     @SuppressWarnings("unchecked")
@@ -68,6 +74,7 @@ public class MyArrayList<T>
     }
 
     public boolean add(final T element) {
+        Objects.requireNonNull(element);
         if (elements.length <= size) {
             increaseCapacity();
         }
@@ -86,6 +93,7 @@ public class MyArrayList<T>
     @Override
     public void add(final int index, final T element) {
         validateIndex(index);
+        Objects.requireNonNull(element);
 
         System.arraycopy(elements, index, elements, index + 1, size - index);
         elements[index] = element;
@@ -105,7 +113,9 @@ public class MyArrayList<T>
         if (elements.length < newCapacity) {
             increaseCapacity(newCapacity);
         }
-        src.forEach(this::add);
+        src.stream()
+                .filter(Objects::nonNull)
+                .forEach(this::add);
         return true;
     }
 
@@ -115,7 +125,9 @@ public class MyArrayList<T>
         validateIndex(insertionIndex);
         Objects.requireNonNull(src);
 
-        T[] extraElements = (T[]) src.toArray();
+        T[] extraElements = (T[]) src.stream()
+                .filter(Objects::nonNull)
+                .toArray();
         int srcLength = extraElements.length;
         T[] buffer = elements;
         elements = (T[]) new Object[this.size + srcLength];
@@ -157,12 +169,7 @@ public class MyArrayList<T>
     @Override
     public int lastIndexOf(final Object required) {
         if (required == null) {
-            return IntStream.range(0, size)
-                    .boxed()
-                    .sorted(Collections.reverseOrder())
-                    .filter(index -> elements[index] == null)
-                    .findFirst()
-                    .orElse(-1);
+            return -1;
         }
         return IntStream.range(0, size)
                 .boxed()
@@ -174,6 +181,9 @@ public class MyArrayList<T>
 
     @Override
     public int indexOf(final Object required) {
+        if (required == null) {
+            return -1;
+        }
         return IntStream.range(0, size)
                 .filter(i -> required.equals(elements[i]))
                 .findFirst()
@@ -189,8 +199,7 @@ public class MyArrayList<T>
     @Override
     public void forEach(Consumer<? super T> action) {
         Objects.requireNonNull(action);
-        Arrays.stream(elements)
-                .filter(Objects::nonNull)
+        Arrays.stream(Arrays.copyOfRange(elements, 0, size))
                 .forEach(action);
     }
 
@@ -199,8 +208,8 @@ public class MyArrayList<T>
     }
 
     public Object clone() {
-        T[] newElements = Arrays.copyOfRange(elements, 0, size);
-        return new MyArrayList<T>(Arrays.asList(newElements));
+        T[] copy = Arrays.copyOfRange(elements, 0, size);
+        return new MyArrayList<T>(Arrays.asList(copy));
     }
 
     @Override
@@ -235,9 +244,7 @@ public class MyArrayList<T>
         }
 
         @Override
-        // I am not sure does this method work correctly in all possible cases
         public void forEachRemaining(Consumer<? super T> action) {
-            Objects.requireNonNull(action);
             MyArrayList.this.forEach(action);
         }
     }
