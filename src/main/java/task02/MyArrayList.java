@@ -11,6 +11,8 @@ import java.util.stream.IntStream;
  * @param <T>
  *     This ArrayList implementation does not support adding null element,
  *     because of inability to change or delete added element.
+ *     And the second reason is that null element can't be used in
+ *     number of cases with forEach loop.
  */
 public class MyArrayList<T>
         extends AbstractList<T> implements List<T>, RandomAccess, Serializable, Cloneable {
@@ -46,6 +48,9 @@ public class MyArrayList<T>
 
     @Override
     public boolean contains(final Object required) {
+        if (required == null || this.size == 0){
+            return false;
+        }
         return Arrays.asList(Arrays.copyOf(elements, this.size))
                 .contains(required);
     }
