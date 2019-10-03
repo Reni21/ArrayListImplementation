@@ -1,14 +1,14 @@
-package task02;
+import task02.MyArrayList;
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-public class Main {
+public class Task01 {
     public static void main(String[] args) {
         Integer[] src = {1, 5, 25, -4, 5, 1, 9, 25, 900, 25, 25, 900, 5, -67, 1000, 25};
-        List<Integer> numbers = new ArrayList<>(Arrays.asList(src));
+        List<Integer> numbers = new MyArrayList<>(Arrays.asList(src));
 
         HashMap<Integer, Integer> res = new HashMap<>();
 
