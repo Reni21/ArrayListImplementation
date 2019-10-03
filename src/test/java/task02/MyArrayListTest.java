@@ -3,9 +3,7 @@ package task02;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.*;
 import static org.assertj.core.api.Assertions.*;
@@ -464,4 +462,55 @@ public class MyArrayListTest {
         String res = instance.get(7);
     }
 
+    // forEach(Consumer<? super T> action) tests
+
+    @Test
+    public void shouldApplyRequiredActionForEveryElementInList() {
+        initMyList();
+        final StringBuilder builder = new StringBuilder();
+        instance.forEach(builder::append);
+        String res = builder.toString();
+        assertEquals("test1test2test3test4", res);
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void shouldThrowUnsupportedOperationExceptionIfStreamWantToChangeOrRewriteElement() {
+        initMyList();
+        instance.replaceAll(el -> el += "23");
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void shouldThrowNullPointerExceptionIfConsumerIsNull() {
+        initMyList();
+        instance.forEach(null);
+    }
+
+    // clone() tests
+
+    @Test
+    public void shouldReturnFullCopyOfCurrentList() {
+        MyArrayList<String> test = new MyArrayList<>();
+        test.add("test1");
+        test.add("test2");
+        List<String> res = (List<String>) test.clone();
+        assertThat(res).isNotNull()
+                .isNotEmpty()
+                .isNotSameAs(test)
+                .hasSize(2)
+                .containsSequence("test1", "test2");
+    }
+
+    // sort(Comparator<? super T> comparator) tests
+
+    @Test
+    public void shouldSortListRequiredToComparator() {
+        initMyList();
+        instance.sort(Comparator.reverseOrder());
+        assertThat(instance).isNotNull()
+                .isNotEmpty()
+                .hasSize(4)
+                .containsSequence("test4", "test3", "test2", "test1");
+    }
+
 }
+
