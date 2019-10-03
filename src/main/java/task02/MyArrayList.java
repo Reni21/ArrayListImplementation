@@ -3,16 +3,16 @@ package task02;
 import java.io.Serializable;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
+import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 import java.util.stream.IntStream;
 
 /**
- *
- * @param <T>
- *     This ArrayList implementation does not support adding null element,
- *     because of inability to change or delete added element.
- *     And the second reason is that null element can't be used in
- *     number of cases with forEach loop.
+ * @param <T> This ArrayList implementation does not support adding null element,
+ *            because of inability to change or delete added element.
+ *            And the second reason is that null element can't be used in
+ *            number of cases with forEach loop.
+ *            Also it does not support any kind of element removing or replacement.
  */
 public class MyArrayList<T>
         extends AbstractList<T> implements List<T>, RandomAccess, Serializable, Cloneable {
@@ -26,7 +26,7 @@ public class MyArrayList<T>
     }
 
     public MyArrayList(int capacity) {
-        if (capacity <= 0) {
+        if (capacity < 0) {
             throw new IllegalArgumentException();
         }
         this.initCapacity = capacity;
@@ -48,11 +48,10 @@ public class MyArrayList<T>
 
     @Override
     public boolean contains(final Object required) {
-        if (required == null || this.size == 0){
+        if (required == null || this.size == 0) {
             return false;
         }
-        return Arrays.asList(Arrays.copyOf(elements, this.size))
-                .contains(required);
+        return this.stream().anyMatch(el -> el.equals(required));
     }
 
     @Override
@@ -62,7 +61,7 @@ public class MyArrayList<T>
 
     @Override
     public T[] toArray() {
-        return Arrays.copyOf(elements, this.size);
+        return (T[]) Arrays.copyOf(elements, this.size);
     }
 
     @Override
@@ -78,30 +77,25 @@ public class MyArrayList<T>
         return newContainer;
     }
 
+    @SuppressWarnings("unchecked")
     public boolean add(final T element) {
-        Objects.requireNonNull(element);
-        if (elements.length <= size) {
+        validateOnNotNull(element);
+        if (elements.length == 0) {
+            elements = (T[]) new Object[1];
+        } else if (elements.length == size) {
             increaseCapacity();
         }
         elements[size++] = element;
         return true;
     }
 
-    private void increaseCapacity() {
-        elements = Arrays.copyOf(elements, size + (size / 2) + 1);
-    }
-
-    private void increaseCapacity(int newCapacity) {
-        elements = Arrays.copyOf(elements, newCapacity);
-    }
-
     @Override
-    public void add(final int index, final T element) {
-        validateIndex(index);
-        Objects.requireNonNull(element);
+    public void add(final int insertionIndex, final T element) {
+        validateIndexConsideringNotEqualsToSize(insertionIndex);
+        validateOnNotNull(element);
 
-        System.arraycopy(elements, index, elements, index + 1, size - index);
-        elements[index] = element;
+        System.arraycopy(elements, insertionIndex, elements, insertionIndex + 1, size - insertionIndex);
+        elements[insertionIndex] = element;
         size++;
     }
 
@@ -111,7 +105,6 @@ public class MyArrayList<T>
         Objects.requireNonNull(src);
 
         if (src.isEmpty()) {
-            elements = (T[]) new Object[0];
             return false;
         }
         int newCapacity = src.size() + this.size;
@@ -127,34 +120,28 @@ public class MyArrayList<T>
     @Override
     @SuppressWarnings("unchecked")
     public boolean addAll(final int insertionIndex, final Collection<? extends T> src) {
-        validateIndex(insertionIndex);
+        validateIndexConsideringNotEqualsToSize(insertionIndex);
         Objects.requireNonNull(src);
+        if (src.isEmpty()) {
+            return false;
+        }
 
         T[] extraElements = (T[]) src.stream()
                 .filter(Objects::nonNull)
                 .toArray();
         int srcLength = extraElements.length;
-        T[] buffer = elements;
         elements = (T[]) new Object[this.size + srcLength];
 
-        System.arraycopy(buffer, 0, elements, 0, insertionIndex);
+        System.arraycopy(elements, insertionIndex, elements, insertionIndex + 1, size - insertionIndex);
         System.arraycopy(extraElements, 0, elements, insertionIndex, srcLength);
-        System.arraycopy(buffer, insertionIndex, elements, srcLength + insertionIndex, size - insertionIndex);
-
-        size = size + srcLength;
+        size += srcLength;
         return true;
-    }
-
-    private void validateIndex(int index) {
-        if (index >= this.size || index < 0)
-            throw new IndexOutOfBoundsException();
     }
 
     @Override
     public boolean containsAll(final Collection<?> src) {
         Objects.requireNonNull(src);
-        T[] copy = Arrays.copyOfRange(elements, 0, size);
-        return Arrays.asList(copy).containsAll(src);
+        return src.stream().allMatch(this::contains);
     }
 
     @Override
@@ -163,12 +150,16 @@ public class MyArrayList<T>
             throw new IllegalArgumentException();
         }
         validateIndex(start);
-        validateIndex(end);
+        validateIndexConsideringNotEqualsToSize(end);
         if (start == end) {
             return new MyArrayList<>();
         }
-        T[] res = Arrays.copyOfRange(elements, start, end);
-        return Arrays.asList(res);
+
+        T[] extracted = Arrays.copyOfRange(elements, start, end);
+        List<T> res = new MyArrayList<>();
+        Arrays.stream(extracted)
+                .forEachOrdered(res::add);
+        return res;
     }
 
     @Override
@@ -241,7 +232,7 @@ public class MyArrayList<T>
             if (currentIndex >= MyArrayList.this.size) {
                 throw new NoSuchElementException();
             }
-            return (T) elements[++currentIndex];
+            return (T) elements[currentIndex++];
         }
 
         public void remove() {
@@ -254,16 +245,36 @@ public class MyArrayList<T>
         }
     }
 
-    @Override
-    public String toString() {
-        return Arrays.toString(Arrays.copyOf(elements, size));
+    private void increaseCapacity() {
+        elements = Arrays.copyOf(elements, size + (size / 2) + 1);
     }
 
-    /**
-     * This realization of ArrayList contains some Unsupported operations.
-     * Basically it does not provide any kind of remove action and ListIterator.
-     * Throws the UnsupportedOperationException.
-     */
+    private void increaseCapacity(int newCapacity) {
+        elements = Arrays.copyOf(elements, newCapacity);
+    }
+
+    private void validateIndex(int index) {
+        if (index >= this.size || index < 0) {
+            throw new IndexOutOfBoundsException();
+        }
+    }
+
+    private void validateIndexConsideringNotEqualsToSize(int index) {
+        if (index > this.size || index < 0) {
+            throw new IndexOutOfBoundsException();
+        }
+    }
+
+    private void validateOnNotNull(T element) {
+        if (element == null) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+//  This realization of ArrayList contains some Unsupported operations.
+//  Basically it does not provide any kind of remove action and ListIterator.
+//  Throws the UnsupportedOperationException.
+
     @Override
     public void clear() {
         throw new UnsupportedOperationException();
@@ -295,14 +306,17 @@ public class MyArrayList<T>
     }
 
     @Override
-    public ListIterator listIterator() {
+    public void replaceAll(UnaryOperator<T> operator) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public ListIterator listIterator(final int index) {
+    protected void removeRange(int fromIndex, int toIndex) {
         throw new UnsupportedOperationException();
     }
 
-
+    @Override
+    public boolean removeIf(Predicate<? super T> filter) {
+        throw new UnsupportedOperationException();
+    }
 }
