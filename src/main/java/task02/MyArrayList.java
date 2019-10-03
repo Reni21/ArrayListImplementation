@@ -203,7 +203,8 @@ public class MyArrayList<T>
         elements = Arrays.copyOfRange(elements, 0, size);
     }
 
-    public Object clone() {
+    @Override
+    protected Object clone() {
         T[] copy = Arrays.copyOfRange(elements, 0, size);
         return new MyArrayList<T>(Arrays.asList(copy));
     }
@@ -214,29 +215,27 @@ public class MyArrayList<T>
     }
 
     private class MyIterator implements Iterator<T> {
-        int startedSize = MyArrayList.this.size;
         int currentIndex;
+        boolean isHasNextCalled;
 
         MyIterator() {
         }
 
         public boolean hasNext() {
+            isHasNextCalled = true;
             return currentIndex != MyArrayList.this.size;
         }
 
         public T next() {
-            if (startedSize != MyArrayList.this.size) {
-                throw new ConcurrentModificationException();
-            }
-
             if (currentIndex >= MyArrayList.this.size) {
                 throw new NoSuchElementException();
             }
-            return (T) elements[currentIndex++];
-        }
-
-        public void remove() {
-            throw new UnsupportedOperationException();
+            if(isHasNextCalled) {
+                isHasNextCalled = false;
+                return (T) elements[currentIndex++];
+            } else {
+                return (T) elements[currentIndex];
+            }
         }
 
         @Override
