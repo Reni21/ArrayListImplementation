@@ -265,9 +265,10 @@ public class MyArrayList<T>
         }
     }
 
-//  This realization of ArrayList contains some Unsupported operations.
-//  Basically it does not provide any kind of remove action and ListIterator.
-//  Throws the UnsupportedOperationException.
+/* This realization of ArrayList contains some Unsupported operations.
+Basically it does not provide any kind of remove action.
+Throws the UnsupportedOperationException.
+*/
 
     @Override
     public void clear() {

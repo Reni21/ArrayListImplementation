@@ -1,6 +1,5 @@
 package task02;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.*;
@@ -9,32 +8,27 @@ import static org.junit.Assert.*;
 import static org.assertj.core.api.Assertions.*;
 
 public class MyArrayListTest {
-    private List<String> instance;
 
-    @Before
-    public void setUp() {
-        instance = new MyArrayList<>();
-    }
-
-    private void initMyList() {
-        instance = new MyArrayList<>();
+    private List<String> initMyList() {
+        List<String> instance = new MyArrayList<>();
         instance.add("test1");
         instance.add("test2");
         instance.add("test3");
         instance.add("test4");
+        return instance;
     }
 
     // size() tests
     @Test
     public void shouldReturnZeroIfListIsEmpty() {
-        instance = new MyArrayList<>();
+        List<String> instance = new MyArrayList<>();
         int res = instance.size();
         assertEquals(0, res);
     }
 
     @Test
     public void shouldReturnCurrentListSize() {
-        initMyList();
+        List<String> instance = initMyList();
         int res = instance.size();
         assertEquals(4, res);
     }
@@ -43,7 +37,7 @@ public class MyArrayListTest {
 
     @Test
     public void shouldReturnTrueIfListIsEmpty() {
-        instance = new MyArrayList<>();
+        List<String> instance = new MyArrayList<>();
         boolean res = instance.isEmpty();
         assertTrue(res);
     }
@@ -52,28 +46,28 @@ public class MyArrayListTest {
 
     @Test
     public void shouldReturnTrueIfMyListContainRequiredElement() {
-        initMyList();
+        List<String> instance = initMyList();
         boolean res = instance.contains("test1");
         assertTrue(res);
     }
 
     @Test
     public void shouldReturnFalseIfMyListDoesNotContainRequiredElement() {
-        initMyList();
+        List<String> instance = initMyList();
         boolean res = instance.contains("search");
         assertFalse(res);
     }
 
     @Test
     public void shouldReturnFalseIfRequiredElementForSearchIsNull() {
-        instance = new MyArrayList<>();
+        List<String> instance = new MyArrayList<>();
         boolean res = instance.contains(null);
         assertFalse(res);
     }
 
     @Test
     public void shouldReturnFalseIfMyListIsEmpty() {
-        instance = new MyArrayList<>();
+        List<String> instance = new MyArrayList<>();
         boolean res = instance.contains("test");
         assertFalse(res);
     }
@@ -82,6 +76,7 @@ public class MyArrayListTest {
 
     @Test
     public void shouldReturnMyListIterator() {
+        List<String> instance = initMyList();
         Iterator<String> res = instance.iterator();
         assertNotNull(res);
     }
@@ -90,7 +85,7 @@ public class MyArrayListTest {
 
     @Test
     public void shouldReturnArrayOfObjectsIfListIsNotEmpty() {
-        initMyList();
+        List<String> instance = initMyList();
         Object[] res = instance.toArray();
         assertThat(res).isNotNull()
                 .isNotEmpty()
@@ -100,14 +95,14 @@ public class MyArrayListTest {
 
     @Test
     public void shouldReturnEmptyArrayIfListIsEmpty() {
-        instance = new MyArrayList<>();
+        List<String> instance = new MyArrayList<>();
         Object[] res = instance.toArray();
         assertThat(res).isNotNull().isEmpty();
     }
 
     @Test(expected = ClassCastException.class)
     public void shouldThrowClassCastExceptionWhenTryToCastResultToRequiredType() {
-        initMyList();
+        List<String> instance = initMyList();
         String[] res = (String[]) instance.toArray();
     }
 
@@ -115,7 +110,7 @@ public class MyArrayListTest {
 
     @Test
     public void shouldReturnNewArrayOfRequiredTypeIfRequiredArrayLengthLessThanListSize() {
-        initMyList();
+        List<String> instance = initMyList();
         String[] test = {"new1", "new2"};
         String[] res = instance.toArray(test);
         assertNotSame(test, res);
@@ -123,7 +118,7 @@ public class MyArrayListTest {
 
     @Test
     public void shouldFillGivenArrayWithElementsFromListIfArraysLengthIsBiggerOrEqualsOfListSize() {
-        initMyList();
+        List<String> instance = initMyList();
         String[] test = {"new1", "new2", "new3", "new4", "new5"};
         String[] res = instance.toArray(test);
         assertSame(test, res);
@@ -131,7 +126,7 @@ public class MyArrayListTest {
 
     @Test
     public void shouldKeepGivenArrayLengthIfItBiggerOrEqualsOfListSize() {
-        initMyList();
+        List<String> instance = initMyList();
         String[] test = {"new1", "new2", "new3", "new4", "new5"};
         String[] res = instance.toArray(test);
         assertThat(res).hasSameSizeAs(test);
@@ -139,7 +134,7 @@ public class MyArrayListTest {
 
     @Test
     public void shouldAddElementsFromListIntoGivenArrayInTheSamePositionAsInList() {
-        initMyList();
+        List<String> instance = initMyList();
         String[] res = {"new1", "new2", "new3", "new4", "new5"};
         instance.toArray(res);
         assertThat(res).startsWith("test1", "test2", "test3", "test4");
@@ -147,7 +142,7 @@ public class MyArrayListTest {
 
     @Test
     public void shouldSetNullIntoIndexEqualsListSizeIfGivenArrayLengthIsBiggerThanListSize() {
-        initMyList();
+        List<String> instance = initMyList();
         String[] test = {"new1", "new2", "new3", "new4", "new5"};
         instance.toArray(test);
         String res = test[4];
@@ -156,7 +151,7 @@ public class MyArrayListTest {
 
     @Test(expected = NullPointerException.class)
     public void shouldThrowNullPointerExceptionIfGivenArrayIsNull() {
-        initMyList();
+        List<String> instance = initMyList();
         instance.toArray(null);
     }
 
@@ -164,21 +159,21 @@ public class MyArrayListTest {
 
     @Test
     public void shouldAddElementIntoEndOfList() {
-        initMyList();
+        List<String> instance = initMyList();
         instance.add("new1");
         assertThat(instance).contains("new1", atIndex(4));
     }
 
     @Test
     public void shouldAddElementIntoListWithIncreasingCapacity() {
-        instance = new MyArrayList<>(0);
+        List<String> instance = new MyArrayList<>(0);
         instance.add("new1");
         assertThat(instance).contains("new1", atIndex(0));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowIllegalArgumentExceptionIfElementToAddIsNull() {
-        instance = new MyArrayList<>();
+        List<String> instance = new MyArrayList<>();
         instance.add(null);
     }
 
@@ -186,7 +181,7 @@ public class MyArrayListTest {
 
     @Test
     public void shouldIncreaseListSizeAfterAddingAnElement() {
-        initMyList();
+        List<String> instance = initMyList();
         instance.add("new1");
         int res = instance.size();
         assertEquals(5, res);
@@ -194,40 +189,40 @@ public class MyArrayListTest {
 
     @Test
     public void shouldAddElementIntoRequiredIndex() {
-        initMyList();
+        List<String> instance = initMyList();
         instance.add(2, "new1");
         assertThat(instance).hasSize(5).contains("new1", atIndex(2));
     }
 
     @Test
     public void shouldAddElementIfIndexForAddingEqualsSize() {
-        initMyList();
+        List<String> instance = initMyList();;
         instance.add(4, "new1");
         assertThat(instance).contains("new1", atIndex(4));
     }
 
     @Test
     public void shouldIncreaseSizeAfterAddingElementIntoRequiredIndex() {
-        initMyList();
+        List<String> instance = initMyList();;
         instance.add(2, "new1");
         assertThat(instance).hasSize(5);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowIllegalArgumentExceptionIfElementToAddIsNullWhenAddWithIndex() {
-        initMyList();
+        List<String> instance = initMyList();;
         instance.add(3, null);
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void shouldThrowIndexOutOfBoundsExceptionWhenIndexForAddingIsLessThenZero() {
-        initMyList();
+        List<String> instance = initMyList();;
         instance.add(-1, "new1");
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void shouldThrowIndexOutOfBoundsExceptionWhenIndexForAddingIsBiggerThenSize() {
-        initMyList();
+        List<String> instance = initMyList();;
         instance.add(5, "new1");
     }
 
@@ -235,7 +230,7 @@ public class MyArrayListTest {
 
     @Test
     public void shouldAddAllElementFromSrcCollectionExceptNull() {
-        initMyList();
+        List<String> instance = initMyList();;
         List<String> test = new ArrayList<>(3);
         test.add("new1");
         test.add(null);
@@ -249,7 +244,7 @@ public class MyArrayListTest {
 
     @Test
     public void shouldReturnTrueIfAddingElementWasSuccessful() {
-        instance = new MyArrayList<>();
+        List<String> instance = new MyArrayList<>();
         List<String> test = new ArrayList<>(2);
         test.add("new1");
         test.add("new2");
@@ -259,7 +254,7 @@ public class MyArrayListTest {
 
     @Test
     public void shouldReturnFalseIfSrcIsEmpty() {
-        instance = new MyArrayList<>();
+        List<String> instance = new MyArrayList<>();
         List<String> test = new ArrayList<>();
         boolean res = instance.addAll(test);
         assertFalse(res);
@@ -267,6 +262,7 @@ public class MyArrayListTest {
 
     @Test(expected = NullPointerException.class)
     public void shouldThrowNullPointerExceptionIfSrcIsNull() {
+        List<String> instance = new MyArrayList<>();
         instance.addAll(null);
     }
 
@@ -274,7 +270,7 @@ public class MyArrayListTest {
 
     @Test
     public void shouldAddAllElementFromSrcCollectionExceptNullIntoRequiredPosition() {
-        initMyList();
+        List<String> instance = initMyList();;
         List<String> test = new ArrayList<>(3);
         test.add("new1");
         test.add(null);
@@ -288,7 +284,7 @@ public class MyArrayListTest {
 
     @Test
     public void shouldReturnTrueIfAddingByIndexWasSuccessful() {
-        initMyList();
+        List<String> instance = initMyList();;
         List<String> test = new ArrayList<>(2);
         test.add("new1");
         test.add("new2");
@@ -298,7 +294,7 @@ public class MyArrayListTest {
 
     @Test
     public void shouldReturnFalseIfSrcForAddingByIndexIsEmpty() {
-        initMyList();
+        List<String> instance = initMyList();;
         List<String> test = new ArrayList<>();
         boolean res = instance.addAll(2, test);
         assertFalse(res);
@@ -306,13 +302,13 @@ public class MyArrayListTest {
 
     @Test(expected = NullPointerException.class)
     public void shouldThrowNullPointerExceptionWhenAddWithIndexIfSrcIsNull() {
-        initMyList();
+        List<String> instance = initMyList();;
         instance.addAll(2, null);
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void shouldThrowIndexOutOfBoundsExceptionWhenIndexForAddingSrcIsLessThenZero() {
-        initMyList();
+        List<String> instance = initMyList();;
         List<String> test = new ArrayList<>();
         test.add("new1");
         instance.addAll(-1, test);
@@ -320,7 +316,7 @@ public class MyArrayListTest {
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void shouldThrowIndexOutOfBoundsExceptionWhenIndexForAddingSrcIsBiggerThenSize() {
-        initMyList();
+        List<String> instance = initMyList();;
         List<String> test = new ArrayList<>();
         test.add("new1");
         instance.addAll(5, test);
@@ -330,7 +326,7 @@ public class MyArrayListTest {
 
     @Test
     public void shouldReturnTrueIfListContainsAllElementFromSrcCollection() {
-        initMyList();
+        List<String> instance = initMyList();;
         List<String> test = new ArrayList<>();
         test.add("test1");
         test.add("test2");
@@ -340,7 +336,7 @@ public class MyArrayListTest {
 
     @Test
     public void shouldReturnFalseIfListDoesNotContainsAllElementFromSrcCollection() {
-        initMyList();
+        List<String> instance = initMyList();;
         List<String> test = new ArrayList<>();
         test.add("test1");
         test.add("new2");
@@ -350,7 +346,7 @@ public class MyArrayListTest {
 
     @Test(expected = NullPointerException.class)
     public void shouldThrowNullPointerExceptionWhenSrcCollectionIsNull() {
-        instance = new MyArrayList<>();
+        List<String> instance = new MyArrayList<>();
         instance.containsAll(null);
     }
 
@@ -358,7 +354,7 @@ public class MyArrayListTest {
 
     @Test
     public void shouldReturnSublistInRangeOfRequiredIndexExcludedEndIndex() {
-        initMyList();
+        List<String> instance = initMyList();;
         List<String> res = instance.subList(1, 3);
         assertThat(res).isNotNull()
                 .isNotEmpty()
@@ -368,7 +364,7 @@ public class MyArrayListTest {
 
     @Test
     public void shouldReturnEmptyListIfStartIndexEqualsToEndIndex() {
-        initMyList();
+        List<String> instance = initMyList();;
         List<String> res = instance.subList(3, 3);
         assertThat(res).isNotNull()
                 .isEmpty();
@@ -376,19 +372,19 @@ public class MyArrayListTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowIllegalArgumentExceptionIfEndIndexLessThanStart() {
-        initMyList();
+        List<String> instance = initMyList();;
         List<String> res = instance.subList(3, 1);
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void shouldThrowIndexOutOfBoundExceptionIfStartIndexIsNotInRange() {
-        initMyList();
+        List<String> instance = initMyList();;
         List<String> res = instance.subList(-1, 3);
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void shouldThrowIndexOutOfBoundExceptionIfEndIndexIsNotInRange() {
-        initMyList();
+        List<String> instance = initMyList();;
         List<String> res = instance.subList(1, 5);
     }
 
@@ -396,7 +392,7 @@ public class MyArrayListTest {
 
     @Test
     public void shouldReturnLasIndexOfRequiredElement() {
-        instance = new MyArrayList<>();
+        List<String> instance = new MyArrayList<>();
         instance.add("test1");
         instance.add("test2");
         instance.add("test1");
@@ -406,14 +402,14 @@ public class MyArrayListTest {
 
     @Test
     public void shouldReturnNegativeNumberOfOneIfListDoesNotContainRequiredElement() {
-        initMyList();
+        List<String> instance = initMyList();;
         int res = instance.lastIndexOf("new1");
         assertEquals(-1, res);
     }
 
     @Test
     public void shouldReturnNegativeNumberOfOneIfRequiredElementIsNull() {
-        initMyList();
+        List<String> instance = initMyList();;
         int res = instance.lastIndexOf(null);
         assertEquals(-1, res);
     }
@@ -422,7 +418,7 @@ public class MyArrayListTest {
 
     @Test
     public void shouldReturnFirstIndexOfRequiredElement() {
-        instance = new MyArrayList<>();
+        List<String> instance = new MyArrayList<>();
         instance.add("test1");
         instance.add("test2");
         instance.add("test1");
@@ -432,14 +428,14 @@ public class MyArrayListTest {
 
     @Test
     public void shouldReturnNegativeNumberOfOneIfListDoesNotContainRequiredEl() {
-        initMyList();
+        List<String> instance = initMyList();;
         int res = instance.indexOf("new1");
         assertEquals(-1, res);
     }
 
     @Test
     public void shouldReturnNegativeNumberOfOneIfRequiredElIsNull() {
-        initMyList();
+        List<String> instance = initMyList();;
         int res = instance.indexOf(null);
         assertEquals(-1, res);
     }
@@ -448,14 +444,14 @@ public class MyArrayListTest {
 
     @Test
     public void shouldReturnElementByRequiredIndex() {
-        initMyList();
+        List<String> instance = initMyList();;
         String res = instance.get(1);
         assertEquals("test2", res);
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void shouldThrowIndexOutOfBoundExceptionIfIndexIsNotInRange() {
-        initMyList();
+        List<String> instance = initMyList();;
         String res = instance.get(7);
     }
 
@@ -463,7 +459,7 @@ public class MyArrayListTest {
 
     @Test
     public void shouldApplyRequiredActionForEveryElementInList() {
-        initMyList();
+        List<String> instance = initMyList();;
         StringBuilder builder = new StringBuilder();
         instance.forEach(builder::append);
         String res = builder.toString();
@@ -472,13 +468,13 @@ public class MyArrayListTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void shouldThrowUnsupportedOperationExceptionIfStreamWantToChangeOrRewriteElement() {
-        initMyList();
+        List<String> instance = initMyList();;
         instance.replaceAll(el -> el += "23");
     }
 
     @Test(expected = NullPointerException.class)
     public void shouldThrowNullPointerExceptionIfConsumerIsNull() {
-        initMyList();
+        List<String> instance = initMyList();;
         instance.forEach(null);
     }
 
@@ -501,7 +497,7 @@ public class MyArrayListTest {
 
     @Test
     public void shouldSortListRequiredToComparator() {
-        initMyList();
+        List<String> instance = initMyList();;
         instance.sort(Comparator.reverseOrder());
         assertThat(instance).isNotNull()
                 .isNotEmpty()
