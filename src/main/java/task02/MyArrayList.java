@@ -27,7 +27,7 @@ public class MyArrayList<T>
 
     public MyArrayList(int capacity) {
         if (capacity < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Capacity can not be less than zero");
         }
         this.initCapacity = capacity;
     }
@@ -79,7 +79,7 @@ public class MyArrayList<T>
 
     @SuppressWarnings("unchecked")
     public boolean add(final T element) {
-        validateOnNotNull(element);
+        checkNotNull(element);
         if (elements.length == 0) {
             elements = (T[]) new Object[1];
         } else if (elements.length == size) {
@@ -91,8 +91,8 @@ public class MyArrayList<T>
 
     @Override
     public void add(final int insertionIndex, final T element) {
-        validateIndexConsideringNotEqualsToSize(insertionIndex);
-        validateOnNotNull(element);
+        checkIndexIsInRangeExclusive(insertionIndex);
+        checkNotNull(element);
 
         System.arraycopy(elements, insertionIndex, elements, insertionIndex + 1, size - insertionIndex);
         elements[insertionIndex] = element;
@@ -100,7 +100,6 @@ public class MyArrayList<T>
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public boolean addAll(final Collection<? extends T> src) {
         Objects.requireNonNull(src);
 
@@ -120,7 +119,7 @@ public class MyArrayList<T>
     @Override
     @SuppressWarnings("unchecked")
     public boolean addAll(final int insertionIndex, final Collection<? extends T> src) {
-        validateIndexConsideringNotEqualsToSize(insertionIndex);
+        checkIndexIsInRangeExclusive(insertionIndex);
         Objects.requireNonNull(src);
         if (src.isEmpty()) {
             return false;
@@ -149,16 +148,15 @@ public class MyArrayList<T>
         if (end < start) {
             throw new IllegalArgumentException("Incorrect index: " + end + ". Less than start.");
         }
-        validateIndex(start);
-        validateIndexConsideringNotEqualsToSize(end);
+        checkIndexIsInRangeInclusive(start);
+        checkIndexIsInRangeExclusive(end);
         if (start == end) {
             return new MyArrayList<>();
         }
 
         T[] extracted = Arrays.copyOfRange(elements, start, end);
         List<T> res = new MyArrayList<>();
-        Arrays.stream(extracted)
-                .forEachOrdered(res::add);
+        res.addAll(Arrays.asList(extracted));
         return res;
     }
 
@@ -188,7 +186,7 @@ public class MyArrayList<T>
 
     @Override
     public T get(final int index) {
-        validateIndex(index);
+        checkIndexIsInRangeInclusive(index);
         return elements[index];
     }
 
@@ -215,10 +213,7 @@ public class MyArrayList<T>
     }
 
     private class MyIterator implements Iterator<T> {
-        int currentIndex;
-
-        MyIterator() {
-        }
+        int currentIndex = 0;
 
         public boolean hasNext() {
             return currentIndex != MyArrayList.this.size;
@@ -247,19 +242,19 @@ public class MyArrayList<T>
         elements = Arrays.copyOf(elements, newCapacity);
     }
 
-    private void validateIndex(int index) {
+    private void checkIndexIsInRangeInclusive(int index) {
         if (index >= this.size || index < 0) {
             throw new IndexOutOfBoundsException("Incorrect index is: " + index);
         }
     }
 
-    private void validateIndexConsideringNotEqualsToSize(int index) {
+    private void checkIndexIsInRangeExclusive(int index) {
         if (index > this.size || index < 0) {
             throw new IndexOutOfBoundsException("Incorrect index is: " + index);
         }
     }
 
-    private void validateOnNotNull(T element) {
+    private void checkNotNull(T element) {
         if (element == null) {
             throw new IllegalArgumentException("This method does not support operation with null.");
         }
