@@ -147,7 +147,7 @@ public class MyArrayList<T>
     @Override
     public List<T> subList(final int start, final int end) {
         if (end < start) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Incorrect index: " + end + ". Less than start.");
         }
         validateIndex(start);
         validateIndexConsideringNotEqualsToSize(end);
@@ -249,19 +249,19 @@ public class MyArrayList<T>
 
     private void validateIndex(int index) {
         if (index >= this.size || index < 0) {
-            throw new IndexOutOfBoundsException();
+            throw new IndexOutOfBoundsException("Incorrect index is: " + index);
         }
     }
 
     private void validateIndexConsideringNotEqualsToSize(int index) {
         if (index > this.size || index < 0) {
-            throw new IndexOutOfBoundsException();
+            throw new IndexOutOfBoundsException("Incorrect index is: " + index);
         }
     }
 
     private void validateOnNotNull(T element) {
         if (element == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("This method does not support operation with null.");
         }
     }
 
