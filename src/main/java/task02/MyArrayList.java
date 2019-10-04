@@ -216,13 +216,11 @@ public class MyArrayList<T>
 
     private class MyIterator implements Iterator<T> {
         int currentIndex;
-        boolean isHasNextCalled;
 
         MyIterator() {
         }
 
         public boolean hasNext() {
-            isHasNextCalled = true;
             return currentIndex != MyArrayList.this.size;
         }
 
@@ -230,17 +228,14 @@ public class MyArrayList<T>
             if (currentIndex >= MyArrayList.this.size) {
                 throw new NoSuchElementException();
             }
-            if(isHasNextCalled) {
-                isHasNextCalled = false;
-                return (T) elements[currentIndex++];
-            } else {
-                return (T) elements[currentIndex];
-            }
+            return (T) elements[currentIndex++];
         }
 
         @Override
         public void forEachRemaining(Consumer<? super T> action) {
-            MyArrayList.this.forEach(action);
+            while (hasNext()) {
+                action.accept(next());
+            }
         }
     }
 

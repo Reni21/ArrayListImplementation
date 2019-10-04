@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.Assert.*;
 
@@ -79,26 +80,17 @@ public class MyIteratorTest {
     }
 
     @Test
-    public void shouldReturnTheSameElementIfNextCalledWithoutCallHasNextBefore() {
-        initMyList();
-        instance = elements.iterator();
-        String res1 = instance.next();
-        String res2 = instance.next();
-        assertEquals(res1, res2);
-    }
-
-    @Test
     public void shouldApplyRequiredActionForIchElement() {
         initMyList();
         instance = elements.iterator();
-        final StringBuilder builder = new StringBuilder();
+        instance.next();
+
+        AtomicInteger counter = new AtomicInteger(0);
         instance.forEachRemaining(el -> {
-            if (el.equals("test2")) {
-                builder.append(el += "1");
-            }
+            counter.incrementAndGet();
+
         });
-        String res = builder.toString();
-        assertEquals("test21", res);
+        assertEquals(3, counter.get());
     }
 
 }

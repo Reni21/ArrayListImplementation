@@ -39,7 +39,6 @@ public class MyArrayListTest {
         assertEquals(4, res);
     }
 
-
     // isEmpty() tests
 
     @Test
@@ -48,7 +47,6 @@ public class MyArrayListTest {
         boolean res = instance.isEmpty();
         assertTrue(res);
     }
-
 
     // contains(Element el) tests
 
@@ -272,7 +270,6 @@ public class MyArrayListTest {
         instance.addAll(null);
     }
 
-
     //  addAll(int index, Collection Src) tests
 
     @Test
@@ -467,7 +464,7 @@ public class MyArrayListTest {
     @Test
     public void shouldApplyRequiredActionForEveryElementInList() {
         initMyList();
-        final StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder();
         instance.forEach(builder::append);
         String res = builder.toString();
         assertEquals("test1test2test3test4", res);
