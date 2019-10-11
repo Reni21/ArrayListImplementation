@@ -47,7 +47,7 @@ public class MyArrayList<T>
     }
 
     @Override
-    public boolean contains(final Object required) {
+    public boolean contains(Object required) {
         if (required == null || this.size == 0) {
             return false;
         }
@@ -66,7 +66,7 @@ public class MyArrayList<T>
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T1> T1[] toArray(final T1[] newContainer) {
+    public <T1> T1[] toArray(T1[] newContainer) {
         if (newContainer.length < size) {
             return (T1[]) Arrays.copyOf(elements, this.size, newContainer.getClass());
         }
@@ -78,7 +78,7 @@ public class MyArrayList<T>
     }
 
     @SuppressWarnings("unchecked")
-    public boolean add(final T element) {
+    public boolean add(T element) {
         checkNotNull(element);
         if (elements.length == 0) {
             elements = (T[]) new Object[1];
@@ -90,7 +90,7 @@ public class MyArrayList<T>
     }
 
     @Override
-    public void add(final int insertionIndex, final T element) {
+    public void add(int insertionIndex, T element) {
         checkIndexIsInRangeExclusive(insertionIndex);
         checkNotNull(element);
 
@@ -100,7 +100,7 @@ public class MyArrayList<T>
     }
 
     @Override
-    public boolean addAll(final Collection<? extends T> src) {
+    public boolean addAll(Collection<? extends T> src) {
         Objects.requireNonNull(src);
 
         if (src.isEmpty()) {
@@ -118,7 +118,7 @@ public class MyArrayList<T>
 
     @Override
     @SuppressWarnings("unchecked")
-    public boolean addAll(final int insertionIndex, final Collection<? extends T> src) {
+    public boolean addAll(int insertionIndex, Collection<? extends T> src) {
         checkIndexIsInRangeExclusive(insertionIndex);
         Objects.requireNonNull(src);
         if (src.isEmpty()) {
@@ -138,13 +138,13 @@ public class MyArrayList<T>
     }
 
     @Override
-    public boolean containsAll(final Collection<?> src) {
+    public boolean containsAll(Collection<?> src) {
         Objects.requireNonNull(src);
         return src.stream().allMatch(this::contains);
     }
 
     @Override
-    public List<T> subList(final int start, final int end) {
+    public List<T> subList(int start, int end) {
         if (end < start) {
             throw new IllegalArgumentException("Incorrect index: " + end + ". Less than start.");
         }
@@ -161,7 +161,7 @@ public class MyArrayList<T>
     }
 
     @Override
-    public int lastIndexOf(final Object required) {
+    public int lastIndexOf(Object required) {
         if (required == null) {
             return -1;
         }
@@ -174,7 +174,7 @@ public class MyArrayList<T>
     }
 
     @Override
-    public int indexOf(final Object required) {
+    public int indexOf(Object required) {
         if (required == null) {
             return -1;
         }
@@ -185,7 +185,7 @@ public class MyArrayList<T>
     }
 
     @Override
-    public T get(final int index) {
+    public T get(int index) {
         checkIndexIsInRangeInclusive(index);
         return elements[index];
     }
@@ -271,27 +271,27 @@ Throws the UnsupportedOperationException.
     }
 
     @Override
-    public boolean remove(final Object element) {
+    public boolean remove(Object element) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean removeAll(final Collection<?> src) {
+    public boolean removeAll(Collection<?> src) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean retainAll(final Collection<?> src) {
+    public boolean retainAll(Collection<?> src) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public T remove(final int index) {
+    public T remove(int index) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public T set(final int index, final T element) {
+    public T set(int index, T element) {
         throw new UnsupportedOperationException();
     }
 
