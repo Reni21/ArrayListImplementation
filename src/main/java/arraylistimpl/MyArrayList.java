@@ -1,4 +1,4 @@
-package task02;
+package arraylistimpl;
 
 import java.io.Serializable;
 import java.util.*;

@@ -1,4 +1,4 @@
-package task02;
+package arraylistimpl;
 
 import org.junit.Test;
 
